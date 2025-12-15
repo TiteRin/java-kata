@@ -34,13 +34,7 @@ public class TextAnalyzer {
                     new State(word)
             );
 
-            State nextState = this.states.getOrDefault(
-                    nextWord,
-                    new State(nextWord)
-            );
-
             this.states.put(word, state);
-            this.states.put(nextWord, nextState);
         }
 
         return this.states;

@@ -19,8 +19,8 @@ class TextAnalyzerTest {
 
         State stateWorld = new State("world");
 
-        assertEquals(2, analyse.size());
+        assertEquals(1, analyse.size());
         assertTrue(analyse.containsKey("hello"));
-        assertTrue(analyse.containsKey("world"));
+        assertFalse(analyse.containsKey("world"));
     }
 }
