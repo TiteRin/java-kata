@@ -18,7 +18,7 @@ public class TextAnalyzer {
                 .trim();
     }
 
-    public Map<String, String[]> convertTextToMap() {
+    private Map<String, String[]> convertTextToMap() {
         String[] words = cleanText()
                 .toLowerCase()
                 .split(" ");
