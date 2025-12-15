@@ -14,13 +14,20 @@ class TextAnalyzerTest {
         TextAnalyzer textAnalyzer = new TextAnalyzer(text);
         Map<String, State> analyse = textAnalyzer.analyze();
 
-        State stateHello = new State("hello");
-        stateHello.addTransition(new State("world"), 1.0);
-
-        State stateWorld = new State("world");
-
         assertEquals(1, analyse.size());
         assertTrue(analyse.containsKey("hello"));
         assertFalse(analyse.containsKey("world"));
+    }
+
+    @Test
+    void analyze_returns_StatesWithTransitions() {
+        String text = "Hello World";
+        TextAnalyzer textAnalyzer = new TextAnalyzer(text);
+        Map<String, State> analyse = textAnalyzer.analyze();
+
+        State stateHello = new State("hello");
+        stateHello.addTransition(new State("world"), 1.0);
+
+        assertEquals(analyse.get("hello"), stateHello);
     }
 }

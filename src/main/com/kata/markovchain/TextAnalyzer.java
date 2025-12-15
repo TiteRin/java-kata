@@ -34,6 +34,10 @@ public class TextAnalyzer {
                     new State(word)
             );
 
+            State nextState = new State(nextWord);
+
+            state.addTransition(nextState, 1.0);
+
             this.states.put(word, state);
         }
 
