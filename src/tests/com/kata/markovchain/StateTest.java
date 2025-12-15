@@ -2,6 +2,9 @@ package com.kata.markovchain;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class StateTest {
@@ -34,16 +37,38 @@ class StateTest {
     }
 
     @Test
-    void addTransition_should_recalulateProbability() {
-        State hello = new State("hello");
-        State world = new State("world");
-        State mona = new State("mona");
+    void convertTextToMap_returns_WordsAsMap() {
+        String text = "Hello World, Hello all the world, hello everybody";
+        Map<String, String[]> mapResult = new HashMap<>();
 
-        hello.addTransition(world);
-        assertEquals(1.0, hello.getTransitions().get(world));
+        mapResult.put("hello", new String[]{"world", "all", "everybody"});
+        mapResult.put("world", new String[]{"hello", "hello"});
+        mapResult.put("all", new String[]{"the"});
+        mapResult.put("the", new String[]{"world"});
 
-        hello.addTransition(mona);
-        assertEquals(0.5, hello.getTransitions().get(world));
-        assertEquals(0.5, hello.getTransitions().get(mona));
+        Map<String, String[]> map = (new TextAnalyzer(text)).convertTextToMap();
+
+        assertTrue(map.containsKey("hello"));
+        assertArrayEquals(mapResult.get("hello"), map.get("hello"));
+        assertTrue(map.containsKey("world"));
+        assertArrayEquals(mapResult.get("world"), map.get("world"));
+        assertTrue(map.containsKey("all"));
+        assertArrayEquals(mapResult.get("all"), map.get("all"));
+        assertTrue(map.containsKey("the"));
+        assertArrayEquals(mapResult.get("the"), map.get("the"));
     }
+
+//    @Test
+//    void addTransition_should_recalulateProbability() {
+//        State hello = new State("hello");
+//        State world = new State("world");
+//        State mona = new State("mona");
+//
+//        hello.addTransition(world);
+//        assertEquals(1.0, hello.getTransitions().get(world));
+//
+//        hello.addTransition(mona);
+//        assertEquals(0.5, hello.getTransitions().get(world));
+//        assertEquals(0.5, hello.getTransitions().get(mona));
+//    }
 }

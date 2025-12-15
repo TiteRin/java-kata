@@ -1,12 +1,11 @@
 package com.kata.markovchain;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class TextAnalyzer {
 
     private final String text;
-    private Map<String, State> states = new HashMap<>();
+    private final Map<String, State> states;
 
     public TextAnalyzer(String text) {
         this.text = text;
@@ -17,6 +16,27 @@ public class TextAnalyzer {
         return this.text.replaceAll("\\W", " ")
                 .replaceAll("\\W+", " ")
                 .trim();
+    }
+
+    public Map<String, String[]> convertTextToMap() {
+        String[] words = cleanText()
+                .toLowerCase()
+                .split(" ");
+
+        Map<String, String[]> map = new HashMap<>();
+
+        for (int i = 0, wordsLength = words.length; i < wordsLength - 1; i++) {
+            String word = words[i];
+            String nextWord = words[i + 1];
+
+            List<String> array = new ArrayList<>(Arrays.asList(map.getOrDefault(word, new String[]{})));
+
+            array.add(nextWord);
+
+            map.put(word, array.toArray(new String[0]));
+        }
+
+        return map;
     }
 
     public Map<String, State> analyze() {
