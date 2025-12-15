@@ -32,4 +32,18 @@ class StateTest {
         State state1 = new State("hello");
         assertNotEquals("hello", state1);
     }
+
+    @Test
+    void addTransition_should_recalulateProbability() {
+        State hello = new State("hello");
+        State world = new State("world");
+        State mona = new State("mona");
+
+        hello.addTransition(world);
+        assertEquals(1.0, hello.getTransitions().get(world));
+
+        hello.addTransition(mona);
+        assertEquals(0.5, hello.getTransitions().get(world));
+        assertEquals(0.5, hello.getTransitions().get(mona));
+    }
 }

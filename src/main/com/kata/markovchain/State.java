@@ -12,8 +12,19 @@ public class State {
         this.name = name;
     }
 
+    @Deprecated
     public void addTransition(State state, double probability) {
         transitions.put(state, probability);
+    }
+
+    public void addTransition(State state) {
+
+        if (transitions.isEmpty()) {
+            transitions.put(state, 1.0);
+            return;
+        }
+
+        // Faire des calculs chiants
     }
 
     public String getName() {
