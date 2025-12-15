@@ -10,6 +10,8 @@ public class TextAnalyzer {
     public TextAnalyzer(String text) {
         this.text = text;
         this.states = new HashMap<>();
+
+        this.analyze();
     }
 
     private String cleanText() {
@@ -39,28 +41,28 @@ public class TextAnalyzer {
         return map;
     }
 
-    public Map<String, State> analyze() {
+    private void analyze() {
+        Map<String, String[]> words = convertTextToMap();
 
-        String[] words = cleanText()
-                .toLowerCase()
-                .split(" ");
+        words.forEach((word, nextWords) -> {
+            State state = new State(word);
+            List<String> array = Arrays.asList(nextWords);
 
-        for (int i = 0, wordsLength = words.length; i < wordsLength - 1; i++) {
-            String word = words[i];
-            String nextWord = words[i + 1];
 
-            State state = this.states.getOrDefault(
-                    word,
-                    new State(word)
-            );
+            int totalWords = nextWords.length;
+            for (String nextWord : nextWords) {
+                if (state.hasTransition(nextWord)) {
+                    continue;
+                }
+                double totalAppearanceInNextWords = Collections.frequency(array, nextWord);
+                state.addTransition(new State(nextWord), totalAppearanceInNextWords / totalWords);
+            }
 
-            State nextState = new State(nextWord);
+            states.put(word, state);
+        });
+    }
 
-            state.addTransition(nextState, 1.0);
-
-            this.states.put(word, state);
-        }
-
-        return this.states;
+    public Map<String, State> getStates() {
+        return states;
     }
 }

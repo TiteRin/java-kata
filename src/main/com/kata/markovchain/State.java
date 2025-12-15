@@ -24,6 +24,10 @@ public class State {
         return transitions;
     }
 
+    public boolean hasTransition(String stateName) {
+        return transitions.containsKey(new State(stateName));
+    }
+
     @Override
     public boolean equals(Object other) {
         if (other == this) return true;
