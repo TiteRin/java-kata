@@ -2,21 +2,21 @@ package com.kata.markovchain;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-class MarkovChainTest {
+class MarkovTextGeneratorTest {
 
     @Test
-    void generateText_returns_string() {
-        MarkovChain markovChain = new MarkovChain(10, "Hello World");
-        assertEquals(10, markovChain.generateText().split(" ").length);
+    void generateText_returns_AStringWith10Words() {
+        MarkovTextGenerator generator = new MarkovTextGenerator("Hello world!");
+        String text = generator.generateText(10);
+
+        assertEquals(10, text.split(" ").length);
     }
 
     @Test
-    void generateText_returns_textWhoseWordsAreInTheOriginalText() {
+    void generateText_returns_AStringWhoseWordsBelongsToTheOriginalText() {
+
         String tirade = """
                 Ah ! non ! c’est un peu court, jeune homme !
                 On pouvait dire… Oh ! Dieu ! … bien des choses en somme…
@@ -74,19 +74,15 @@ class MarkovChainTest {
                 Mais je ne permets pas qu’un autre me les serve.
                 """;
 
-        MarkovChain markovChain = new MarkovChain(20, tirade);
-        String generatedText = markovChain.generateText();
 
-        System.out.println("[" + generatedText + "]");
+        MarkovTextGenerator generator = new MarkovTextGenerator(tirade);
+        String text = generator.generateText(200);
 
-        List<String> list = Arrays.asList(
-                tirade.toLowerCase().split("[^\\p{L}\\p{N}]+")
-        );
+        System.out.println(text);
 
-        for (String word : generatedText.split(" ")) {
-            System.out.print("->" + word);
-            System.out.println(" : " + list.contains(word));
-            assertTrue(list.contains(word));
+        assertNotEquals(tirade, text);
+        for (String word : text.split(" ")) {
+            assertTrue(tirade.toLowerCase().contains(word));
         }
     }
 }

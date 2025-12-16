@@ -1,5 +1,6 @@
 package com.kata.markovchain;
 
+import com.kata.markovchain.text.SimpleTextPreprocessor;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

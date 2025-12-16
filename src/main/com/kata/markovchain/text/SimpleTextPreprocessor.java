@@ -1,4 +1,4 @@
-package com.kata.markovchain;
+package com.kata.markovchain.text;
 
 import java.util.List;
 
