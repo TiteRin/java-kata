@@ -3,6 +3,7 @@ package com.kata.markovchain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 class MarkovChain {
 
@@ -16,15 +17,18 @@ class MarkovChain {
 
     public String generateText() {
 
-        Map<String, State> states = this.textAnalyzer.getStates();
+        Map<String, State> machine = this.textAnalyzer.getStates();
+        List<State> allStates = new ArrayList<>(machine.values());
 
         List<String> words = new ArrayList<>();
 
-        State nextStep = states.entrySet().stream().findAny().get().getValue();
+        State nextStep = allStates.get(
+                ThreadLocalRandom.current().nextInt(0, allStates.size())
+        );
 
         do {
             String currentWord = nextStep.getName();
-            State currentStep = states.get(currentWord);
+            State currentStep = machine.get(currentWord);
             words.add(currentWord);
 
             if (currentStep.getTransitions().isEmpty()) break;
@@ -32,10 +36,11 @@ class MarkovChain {
             double random = Math.random();
             double cumulativeProbability = 0.0;
 
-            for(Map.Entry<State, Double> entry: currentStep.getTransitions().entrySet()) {
+            for (Map.Entry<State, Double> entry : currentStep.getTransitions().entrySet()) {
                 cumulativeProbability += entry.getValue();
                 if (random <= cumulativeProbability) {
                     nextStep = entry.getKey();
+                    break;
                 }
             }
 
