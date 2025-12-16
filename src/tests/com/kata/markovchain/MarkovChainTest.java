@@ -80,12 +80,7 @@ class MarkovChainTest {
         System.out.println("[" + generatedText + "]");
 
         List<String> list = Arrays.asList(
-                tirade
-                        .replaceAll("\\W", " ")
-                        .replaceAll("\\W+", " ")
-                        .trim()
-                        .toLowerCase()
-                        .split(" ")
+                tirade.toLowerCase().split("[^\\p{L}\\p{N}]+")
         );
 
         for (String word : generatedText.split(" ")) {

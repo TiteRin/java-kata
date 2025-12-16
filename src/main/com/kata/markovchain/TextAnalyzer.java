@@ -15,15 +15,12 @@ public class TextAnalyzer {
     }
 
     private String cleanText() {
-        return this.text.replaceAll("\\W", " ")
-                .replaceAll("\\W+", " ")
-                .trim();
+        return this.text.toLowerCase();
+
     }
 
     private Map<String, String[]> convertTextToMap() {
-        String[] words = cleanText()
-                .toLowerCase()
-                .split(" ");
+        String[] words = cleanText().split("[^\\p{L}\\p{N}]+");
 
         Map<String, String[]> map = new HashMap<>();
 
