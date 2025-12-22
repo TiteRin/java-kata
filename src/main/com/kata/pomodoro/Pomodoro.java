@@ -1,14 +1,6 @@
 package com.kata.pomodoro;
 
-import java.util.Objects;
-
-public class Pomodoro {
-
-    private final PomodoroState state;
-
-    private Pomodoro(PomodoroState state) {
-        this.state = Objects.requireNonNull(state);
-    }
+public record Pomodoro(PomodoroState state) {
 
     public static Pomodoro create() {
         return new Pomodoro(PomodoroState.STOPPED);
