@@ -6,19 +6,19 @@ public record Pomodoro(PomodoroState state) {
         return new Pomodoro(PomodoroState.STOPPED);
     }
 
-    public PomodoroState getState() {
-        return this.state;
-    }
-
     public Pomodoro start() {
-        return new Pomodoro(PomodoroState.STARTED);
+        return new Pomodoro(this.state.start());
     }
 
     public Pomodoro stop() {
-        return new Pomodoro(PomodoroState.STOPPED);
+        return new Pomodoro(this.state.stop());
     }
 
     public Pomodoro pause() {
-        return new Pomodoro(PomodoroState.PAUSED);
+        return new Pomodoro(this.state.pause());
+    }
+
+    public Pomodoro resume() {
+        return new Pomodoro(this.state.resume());
     }
 }
