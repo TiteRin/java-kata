@@ -8,13 +8,13 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat; // Ajoute cette ligne
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Pomodoro Timer")
 public class PomodoroTest {
@@ -165,4 +165,58 @@ public class PomodoroTest {
             }
         }
     }
+
+
+    @Nested
+    @DisplayName("Pomodoro Session")
+    class Session {
+
+        @Test
+        @DisplayName("Creates correct elapsed duration")
+        void shouldCreateCorrectElapsedDuration() {
+            Pomodoro pomodoro = Pomodoro.of(Duration.ofMinutes(25));
+            Instant now = Instant.now();
+            PomodoroSession session = new PomodoroSession(
+                    now,
+                    now.plus(Duration.ofMinutes(5)),
+                    pomodoro
+            );
+            assertThat(session.elapsed())
+                    .as("Le temps écoulé doit être de 5 minutes")
+                    .isEqualTo(Duration.ofMinutes(5));
+        }
+
+        @Test
+        @DisplayName("Is Successful when Pomodoro is finished")
+        void shouldCreateCorrectRemainingDuration() {
+            Pomodoro pomodoro = Pomodoro.of(Duration.ofMinutes(0));
+            Instant now = Instant.now();
+            PomodoroSession session = new PomodoroSession(
+                    now,
+                    now.plus(Duration.ofMinutes(5)),
+                    pomodoro
+            );
+
+            assertThat(session.isFinished())
+                    .as("La session est considérée comme finie lorsque le timer est terminé")
+                    .isEqualTo(true);
+        }
+    }
+
+
+//    @Nested
+//    @DisplayName("History of sessions")
+//    class HistoryOfSession {
+//
+//        @Test
+//        @DisplayName("Should maintain history of sessions")
+//        void shouldMaintainHistoryOfSessions() {
+//            Pomodoro pomodoro = Pomodoro.startWork();
+//            pomodoro.stop();
+//
+//            List<PomodoroSession> history = pomodoro.history();
+//            assertThat(history.size()).as("L’historique doit contenir un élément").isEqualTo(1);
+//            assertThat(history.getFirst().state()).as("L’historique doit contenir l’état STOPPED").isEqualTo(PomodoroState.STOPPED);
+//        }
+//    }
 }

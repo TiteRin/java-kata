@@ -20,7 +20,7 @@ public record Pomodoro(PomodoroState state, Duration totalDuration, Instant star
 
     public static Pomodoro startBreak() {
         return new Pomodoro(PomodoroState.STARTED, Duration.ofMinutes(5), Instant.now(), null, Clock.systemUTC());
-    };
+    }
 
 
     public static Pomodoro create() {
