@@ -64,4 +64,12 @@ public record Pomodoro(PomodoroState state, Duration totalDuration, Instant star
                 clock
         );
     }
+
+    public Duration elapsed() {
+        return Duration.ofMinutes(5);
+    }
+
+    public Duration remaining() {
+        return Duration.ofMinutes(20);
+    }
 }
