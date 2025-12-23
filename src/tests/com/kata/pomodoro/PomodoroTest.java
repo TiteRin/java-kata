@@ -204,19 +204,38 @@ public class PomodoroTest {
     }
 
 
-//    @Nested
-//    @DisplayName("History of sessions")
-//    class HistoryOfSession {
-//
-//        @Test
-//        @DisplayName("Should maintain history of sessions")
-//        void shouldMaintainHistoryOfSessions() {
-//            Pomodoro pomodoro = Pomodoro.startWork();
-//            pomodoro.stop();
-//
-//            List<PomodoroSession> history = pomodoro.history();
-//            assertThat(history.size()).as("L’historique doit contenir un élément").isEqualTo(1);
-//            assertThat(history.getFirst().state()).as("L’historique doit contenir l’état STOPPED").isEqualTo(PomodoroState.STOPPED);
-//        }
-//    }
+    @Nested
+    @DisplayName("History of sessions")
+    class HistoryOfSession {
+
+        @Test
+        @DisplayName("By default, the history is empty")
+        void shouldBeEmptyByDefault() {
+            PomodoroHistory history = new PomodoroHistory();
+
+            assertThat(history.all()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("Should return new instance when new session is added")
+        void shouldReturnNewInstanceWhenNewSessionIsAdded() {
+            PomodoroHistory h1 = new PomodoroHistory();
+            PomodoroHistory h2 = h1.add(new PomodoroSession(Instant.now(), Instant.now(), Pomodoro.create()));
+
+            assertThat(h1).isNotSameAs(h2);
+        }
+
+        @Test
+        @DisplayName("Should return the latest session")
+        void shouldReturnTheLatestSession() {
+            Pomodoro pomodoro = Pomodoro.create();
+            PomodoroHistory history = new PomodoroHistory()
+                    .add(new PomodoroSession(Instant.now(), Instant.now(), pomodoro))
+                    .add(new PomodoroSession(Instant.now(), Instant.now(), pomodoro.start()))
+                    .add(new PomodoroSession(Instant.now(), Instant.now(), pomodoro.start().pause()));
+
+            assertThat(history.first().pomodoro()).isEqualTo(pomodoro);
+            assertThat(history.last().pomodoro().state()).isEqualTo(PomodoroState.PAUSED);
+        }
+    }
 }
