@@ -65,6 +65,10 @@ public record Pomodoro(PomodoroState state, Duration totalDuration, Instant star
         );
     }
 
+    public Pomodoro withClock(Clock withClock) {
+        return new Pomodoro(state, totalDuration, startedAt, pausedAt, withClock);
+    }
+
     public Duration elapsed() {
         return Duration.ofMinutes(5);
     }

@@ -113,7 +113,7 @@ public class PomodoroTest {
 
             Clock later = Clock.offset(fixed, Duration.ofMinutes(5));
 
-            Pomodoro pLater = new Pomodoro(p.state(), p.totalDuration(), p.startedAt(), p.pausedAt(), later);
+            Pomodoro pLater = p.withClock(later);
 
             assertThat(pLater.elapsed()).isEqualTo(Duration.ofMinutes(5));
             assertThat(pLater.remaining()).isEqualTo(Duration.ofMinutes(20));
