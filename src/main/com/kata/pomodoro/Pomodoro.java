@@ -86,4 +86,8 @@ public record Pomodoro(PomodoroState state, Duration totalDuration, Instant star
     public Duration remaining() {
         return totalDuration.minus(elapsed());
     }
+
+    public boolean isFinished() {
+        return remaining().isZero() || remaining().isNegative();
+    }
 }

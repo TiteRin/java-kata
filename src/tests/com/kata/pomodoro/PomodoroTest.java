@@ -8,10 +8,13 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat; // Ajoute cette ligne
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Pomodoro Timer")
 public class PomodoroTest {
@@ -117,6 +120,49 @@ public class PomodoroTest {
 
             assertThat(pLater.elapsed()).isEqualTo(Duration.ofMinutes(5));
             assertThat(pLater.remaining()).isEqualTo(Duration.ofMinutes(20));
+        }
+
+        @Test
+        @DisplayName("Should call onFinis immediatly when Pomodoro is already finished")
+        void timerCallsOnFinishImmediatelyWhenPomodoroIsAlreadyFinished() throws InterruptedException {
+            Pomodoro finished = Pomodoro.of(Duration.ZERO).start();
+            CountDownLatch latch = new CountDownLatch(1);
+
+            PomodoroTimer timer = new SimplePomodoroTimer(
+                    finished,
+                    null,
+                    latch::countDown
+            );
+
+            timer.start();
+
+            boolean called = latch.await(1, TimeUnit.SECONDS);
+            assertThat(called).as("onFinish doit être appelé immédiatement").isTrue();
+
+            timer.stop();
+        }
+
+
+        @Test
+        @DisplayName("Timer notifies on finish")
+        void shouldNotifyOnFinish() throws InterruptedException {
+            CountDownLatch latch = new CountDownLatch(1);
+            Pomodoro pomodoro = Pomodoro.of(Duration.ofMillis(200)).start();
+
+            PomodoroTimer timer = new SimplePomodoroTimer(
+                    pomodoro,
+                    null,
+                    latch::countDown
+            );
+
+            timer.start();
+            boolean finished = latch.await(2, TimeUnit.SECONDS);
+
+            try {
+                assertThat(finished).as("Le Timer devrait avoir appelé onFinish après l'écoulement du temps").isTrue();
+            } finally {
+                timer.stop();
+            }
         }
     }
 }
