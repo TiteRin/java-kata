@@ -70,10 +70,20 @@ public record Pomodoro(PomodoroState state, Duration totalDuration, Instant star
     }
 
     public Duration elapsed() {
-        return Duration.ofMinutes(5);
+
+        if (state == PomodoroState.STOPPED) {
+            return Duration.ZERO;
+        }
+
+        if (startedAt == null) {
+            return Duration.ZERO;
+        }
+
+        Instant endPoint = (state == PomodoroState.PAUSED) ? pausedAt : Instant.now(clock);
+        return Duration.between(startedAt, endPoint);
     }
 
     public Duration remaining() {
-        return Duration.ofMinutes(20);
+        return totalDuration.minus(elapsed());
     }
 }
