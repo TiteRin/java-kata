@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PomodoroHistory {
-    private List<PomodoroSession> history;
+    private final List<PomodoroSession> history;
 
     public PomodoroHistory(List<PomodoroSession> history) {
         this.history = List.copyOf(history);
     }
 
     public PomodoroHistory() {
-        this.history = new ArrayList<>();
+        this.history = List.copyOf(List.of());
     }
 
     public PomodoroHistory add(PomodoroSession session) {

@@ -237,5 +237,18 @@ public class PomodoroTest {
             assertThat(history.first().pomodoro()).isEqualTo(pomodoro);
             assertThat(history.last().pomodoro().state()).isEqualTo(PomodoroState.PAUSED);
         }
+
+        @Test
+        @DisplayName("Should be immutable")
+        void shouldBeImmutable() {
+            PomodoroHistory history = new PomodoroHistory();
+            List<PomodoroSession> sessions = history.all();
+
+            assertThatThrownBy(
+                    () -> sessions.add(
+                            new PomodoroSession(Instant.now(), Instant.now(), Pomodoro.create())
+                    )).isInstanceOf(UnsupportedOperationException.class);
+
+        }
     }
 }
