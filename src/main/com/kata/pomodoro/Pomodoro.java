@@ -14,6 +14,14 @@ public record Pomodoro(PomodoroState state, Duration totalDuration, Instant star
         return new Pomodoro(PomodoroState.STOPPED, duration, null, null, clock);
     }
 
+    public static Pomodoro startWork() {
+        return new Pomodoro(PomodoroState.STARTED, Duration.ofMinutes(25), Instant.now(), null, Clock.systemUTC());
+    }
+
+    public static Pomodoro startBreak() {
+        return new Pomodoro(PomodoroState.STARTED, Duration.ofMinutes(5), Instant.now(), null, Clock.systemUTC());
+    };
+
 
     public static Pomodoro create() {
         return new Pomodoro(PomodoroState.STOPPED, Duration.ofMinutes(25), null, null, Clock.systemUTC());
