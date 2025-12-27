@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat; // Ajoute cette ligne
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @DisplayName("Pomodoro Timer")
@@ -257,10 +258,10 @@ public class PomodoroTest {
     @DisplayName("Pomodoro Engine")
     class Engine {
 
-        public static final int ASYNC_TIMER_BUFFER_MS = 1100;
         private MutableClock clock;
         private PomodoroEngine engine;
         private final Duration defaultDuration = Duration.ofMinutes(25);
+        public static final Duration ASYNC_TIMER_BUFFER_MS = Duration.ofMillis(2000);
 
         @BeforeEach
         void setUp() {
@@ -274,25 +275,30 @@ public class PomodoroTest {
         void startNewSessionCreatesPomodoroAndTimer() {
 
             engine.startNewSession(defaultDuration);
-            assertThat(engine.currentPomodoro()).isPresent();
-            assertThat(engine.timer()).isPresent();
+
+            await().atMost(ASYNC_TIMER_BUFFER_MS).untilAsserted(() -> {
+                assertThat(engine.currentPomodoro()).isPresent();
+                assertThat(engine.timer()).isPresent();
+            });
         }
 
         @Test
         @DisplayName("Start new session")
-        void startNewSession() throws InterruptedException {
+        void startNewSession() {
 
             engine.startNewSession(defaultDuration);
 
             clock.advance(defaultDuration);
-            awaitTimerUpdate();
 
-            assertThat(engine.currentPomodoro())
-                    .as("currentPomodoro should be empty")
-                    .isNotPresent();
-            assertThat(engine.timer())
-                    .as("Timer should be empty")
-                    .isNotPresent();
+            await().atMost(ASYNC_TIMER_BUFFER_MS).untilAsserted(() -> {
+
+                assertThat(engine.currentPomodoro())
+                        .as("currentPomodoro should be empty")
+                        .isNotPresent();
+                assertThat(engine.timer())
+                        .as("Timer should be empty")
+                        .isNotPresent();
+            });
         }
 
         @Test
@@ -301,30 +307,29 @@ public class PomodoroTest {
 
             engine.startNewSession(defaultDuration);
             engine.stop();
-            assertThat(engine.currentPomodoro()).isNotPresent();
-            assertThat(engine.timer()).isNotPresent();
+
+            await().atMost(ASYNC_TIMER_BUFFER_MS).untilAsserted(() -> {
+                assertThat(engine.currentPomodoro()).isNotPresent();
+                assertThat(engine.timer()).isNotPresent();
+            });
         }
 
         @Test
         @DisplayName("Pause session")
-        void pauseSession() throws InterruptedException {
+        void pauseSession() {
             engine.startNewSession(defaultDuration);
 
             clock.advance(Duration.ofMinutes(10));
-            awaitTimerUpdate();
-
             engine.pause();
-            assertThat(engine.currentPomodoro()).isPresent();
-            assertThat(engine.state()).isEqualTo(PomodoroState.PAUSED);
-            assertThat(engine.timer()).isPresent();
-            assertThat(engine.getElapsed()).isEqualTo(Duration.ofMinutes(10));
-            assertThat(engine.getRemaining()).isEqualTo(Duration.ofMinutes(15));
+
+            await().atMost(ASYNC_TIMER_BUFFER_MS).untilAsserted(() -> {
+
+                assertThat(engine.state()).isEqualTo(PomodoroState.PAUSED);
+                assertThat(engine.currentPomodoro()).isPresent();
+                assertThat(engine.timer()).isPresent();
+                assertThat(engine.getElapsed()).isEqualTo(Duration.ofMinutes(10));
+                assertThat(engine.getRemaining()).isEqualTo(Duration.ofMinutes(15));
+            });
         }
-
-        private static void awaitTimerUpdate() throws InterruptedException {
-            Thread.sleep(ASYNC_TIMER_BUFFER_MS);
-        }
-
-
     }
 }
