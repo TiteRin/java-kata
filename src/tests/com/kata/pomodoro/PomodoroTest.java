@@ -257,6 +257,7 @@ public class PomodoroTest {
     @DisplayName("Pomodoro Engine")
     class Engine {
 
+        public static final int ASYNC_TIMER_BUFFER_MS = 1100;
         private MutableClock clock;
         private PomodoroEngine engine;
         private final Duration defaultDuration = Duration.ofMinutes(25);
@@ -284,7 +285,7 @@ public class PomodoroTest {
             engine.startNewSession(defaultDuration);
 
             clock.advance(defaultDuration);
-            Thread.sleep(1100);
+            awaitTimerUpdate();
 
             assertThat(engine.currentPomodoro())
                     .as("currentPomodoro should be empty")
@@ -310,7 +311,7 @@ public class PomodoroTest {
             engine.startNewSession(defaultDuration);
 
             clock.advance(Duration.ofMinutes(10));
-            Thread.sleep(1100);
+            awaitTimerUpdate();
 
             engine.pause();
             assertThat(engine.currentPomodoro()).isPresent();
@@ -319,6 +320,11 @@ public class PomodoroTest {
             assertThat(engine.getElapsed()).isEqualTo(Duration.ofMinutes(10));
             assertThat(engine.getRemaining()).isEqualTo(Duration.ofMinutes(15));
         }
+
+        private static void awaitTimerUpdate() throws InterruptedException {
+            Thread.sleep(ASYNC_TIMER_BUFFER_MS);
+        }
+
 
     }
 }
