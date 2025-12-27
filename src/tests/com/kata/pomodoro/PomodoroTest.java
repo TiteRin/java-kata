@@ -251,4 +251,40 @@ public class PomodoroTest {
 
         }
     }
+
+    @Nested
+    @DisplayName("Pomodoro Engine")
+    class Engine {
+
+        @Test
+        @DisplayName("Start new session creates pomodoro and timer")
+        void startNewSessionCreatesPomodoroAndTimer() {
+
+            PomodoroEngine engine = new PomodoroEngine();
+            engine.startNewSession(Duration.ofMinutes(25));
+            assertThat(engine.currentPomodoro()).isPresent();
+            assertThat(engine.timer()).isPresent();
+        }
+
+        @Test
+        @DisplayName("Start new session")
+        void startNewSession() throws InterruptedException {
+
+            MutableClock clock = new MutableClock(Instant.now(), ZoneOffset.UTC);
+            PomodoroEngine engine = new PomodoroEngine(clock);
+
+            engine.startNewSession(Duration.ofMinutes(25));
+
+            clock.advance(Duration.ofMinutes(25));
+            Thread.sleep(1100);
+
+            assertThat(engine.currentPomodoro())
+                    .as("currentPomodoro should be empty")
+                    .isNotPresent();
+            assertThat(engine.timer())
+                    .as("Timer should be empty")
+                    .isNotPresent();
+        }
+
+    }
 }

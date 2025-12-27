@@ -4,7 +4,13 @@ import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 
-public record Pomodoro(PomodoroState state, Duration totalDuration, Instant startedAt, Instant pausedAt, Clock clock) {
+public record Pomodoro(
+        PomodoroState state,
+        Duration totalDuration,
+        Instant startedAt,
+        Instant pausedAt,
+        Clock clock
+) {
 
     public static Pomodoro of(Duration duration) {
         return new Pomodoro(PomodoroState.STOPPED, duration, null, null, Clock.systemUTC());
@@ -96,6 +102,6 @@ public record Pomodoro(PomodoroState state, Duration totalDuration, Instant star
     }
 
     public boolean isFinished() {
-        return remaining().isZero() || remaining().isNegative();
+        return !remaining().isPositive();
     }
 }
