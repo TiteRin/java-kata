@@ -1,5 +1,6 @@
 package com.kata.pomodoro;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -256,12 +257,22 @@ public class PomodoroTest {
     @DisplayName("Pomodoro Engine")
     class Engine {
 
+        private MutableClock clock;
+        private PomodoroEngine engine;
+        private final Duration defaultDuration = Duration.ofMinutes(25);
+
+        @BeforeEach
+        void setUp() {
+            clock = new MutableClock(Instant.now(), ZoneOffset.UTC);
+            engine = new PomodoroEngine(clock);
+        }
+
+
         @Test
         @DisplayName("Start new session creates pomodoro and timer")
         void startNewSessionCreatesPomodoroAndTimer() {
 
-            PomodoroEngine engine = new PomodoroEngine();
-            engine.startNewSession(Duration.ofMinutes(25));
+            engine.startNewSession(defaultDuration);
             assertThat(engine.currentPomodoro()).isPresent();
             assertThat(engine.timer()).isPresent();
         }
@@ -270,12 +281,9 @@ public class PomodoroTest {
         @DisplayName("Start new session")
         void startNewSession() throws InterruptedException {
 
-            MutableClock clock = new MutableClock(Instant.now(), ZoneOffset.UTC);
-            PomodoroEngine engine = new PomodoroEngine(clock);
+            engine.startNewSession(defaultDuration);
 
-            engine.startNewSession(Duration.ofMinutes(25));
-
-            clock.advance(Duration.ofMinutes(25));
+            clock.advance(defaultDuration);
             Thread.sleep(1100);
 
             assertThat(engine.currentPomodoro())
@@ -284,6 +292,32 @@ public class PomodoroTest {
             assertThat(engine.timer())
                     .as("Timer should be empty")
                     .isNotPresent();
+        }
+
+        @Test
+        @DisplayName("Stop session")
+        void stopSession() {
+
+            engine.startNewSession(defaultDuration);
+            engine.stop();
+            assertThat(engine.currentPomodoro()).isNotPresent();
+            assertThat(engine.timer()).isNotPresent();
+        }
+
+        @Test
+        @DisplayName("Pause session")
+        void pauseSession() throws InterruptedException {
+            engine.startNewSession(defaultDuration);
+
+            clock.advance(Duration.ofMinutes(10));
+            Thread.sleep(1100);
+
+            engine.pause();
+            assertThat(engine.currentPomodoro()).isPresent();
+            assertThat(engine.currentPomodoro().get().state()).isEqualTo(PomodoroState.PAUSED);
+            assertThat(engine.timer()).isPresent();
+            assertThat(engine.getElapsed()).isEqualTo(Duration.ofMinutes(10));
+            assertThat(engine.getRemaining()).isEqualTo(Duration.ofMinutes(15));
         }
 
     }
