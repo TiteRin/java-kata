@@ -314,7 +314,7 @@ public class PomodoroTest {
 
             engine.pause();
             assertThat(engine.currentPomodoro()).isPresent();
-            assertThat(engine.currentPomodoro().get().state()).isEqualTo(PomodoroState.PAUSED);
+            assertThat(engine.state()).isEqualTo(PomodoroState.PAUSED);
             assertThat(engine.timer()).isPresent();
             assertThat(engine.getElapsed()).isEqualTo(Duration.ofMinutes(10));
             assertThat(engine.getRemaining()).isEqualTo(Duration.ofMinutes(15));

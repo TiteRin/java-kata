@@ -83,6 +83,10 @@ public class PomodoroEngine {
         return history.last();
     }
 
+    public PomodoroState state() {
+        return currentPomodoro().map(Pomodoro::state).orElse(PomodoroState.STOPPED);
+    }
+
     public Duration getRemaining() {
         return currentPomodoro().map(Pomodoro::remaining).orElse(Duration.ZERO);
     }
