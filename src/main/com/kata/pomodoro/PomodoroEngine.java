@@ -26,7 +26,7 @@ public class PomodoroEngine {
         this.currentPomodoro = Pomodoro.of(duration, clock).start();
         Instant startInstant = clock.instant();
 
-        this.timer = new SimplePomodoroTimer(currentPomodoro, (ignored) -> { System.out.print("tick, "); }, () -> {
+        this.timer = new SimplePomodoroTimer(currentPomodoro, null, () -> {
             Instant endInstant = clock.instant();
             PomodoroSession session = new PomodoroSession(startInstant, endInstant, currentPomodoro);
             history = history.add(session);
